@@ -1,0 +1,39 @@
+2004-12-20 22:58  Diab Jerius  <dj@macabre@head.cfa.harvard.edu>
+
+	* Makefile.PL, lib/Astro/NED/Query.pm: [no log message]
+
+2004-12-20 22:58  Diab Jerius  <dj@macabre@head.cfa.harvard.edu>
+
+	* t/: byname.t, nearname.t, nearposn.t: minor changes to work with
+	  current NED database results
+
+2004-12-20 22:57  Diab Jerius  <dj@macabre@head.cfa.harvard.edu>
+
+	* lib/Astro/NED/Response/Objects.pm: NED now provides diameter data
+
+2004-12-20 22:57  Diab Jerius  <dj@macabre@head.cfa.harvard.edu>
+
+	* lib/Astro/NED/Query/CoordExtinct.pm, t/coordextinct.t,
+	  lib/Astro/NED/Response/CoordExtinct.pm: new interface to
+	  coordinate transforms and galactic extinction
+
+2003-02-06 11:45  Diab Jerius  <dj@macabre@head.cfa.harvard.edu>
+
+	* Changes, LICENSE, MANIFEST, MANIFEST.SKIP, Makefile.PL, README,
+	  lib/Astro/NED/Query.pm, lib/Astro/NED/Query/ByName.pm,
+	  lib/Astro/NED/Query/NearName.pm,
+	  lib/Astro/NED/Query/NearPosition.pm,
+	  lib/Astro/NED/Query/Objects.pm, lib/Astro/NED/Response/Object.pm,
+	  lib/Astro/NED/Response/Objects.pm, t/byname.t, t/nearname.t,
+	  t/nearposn.t: Initial revision
+
+2003-02-06 11:45  Diab Jerius  <dj@macabre@head.cfa.harvard.edu>
+
+	* Changes, LICENSE, MANIFEST, MANIFEST.SKIP, Makefile.PL, README,
+	  lib/Astro/NED/Query.pm, lib/Astro/NED/Query/ByName.pm,
+	  lib/Astro/NED/Query/NearName.pm,
+	  lib/Astro/NED/Query/NearPosition.pm,
+	  lib/Astro/NED/Query/Objects.pm, lib/Astro/NED/Response/Object.pm,
+	  lib/Astro/NED/Response/Objects.pm, t/byname.t, t/nearname.t,
+	  t/nearposn.t: [no log message]
+

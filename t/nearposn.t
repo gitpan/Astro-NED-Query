@@ -28,7 +28,8 @@ eval {
 };
 ok( !$@, "query" );
 
-ok( 1 == $res->nobjects && ($res->objects)[0]->Name eq 'ABELL 2199',
+#$_->dump foreach $res->objects;
+
+ok( $res->nobjects > 0 && ($res->objects)[0]->Name eq 'ABELL 2199',
 "query result" );
 
-#$_->dump foreach $res->objects;

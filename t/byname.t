@@ -22,7 +22,7 @@ ok( $req->ObjName eq $object, "ObjName" );
 eval {
      $res = $req->query;
 };
-ok( !$@, "query" );
+ok( !$@, "query" ) or diag( $@ );
 
 ok( 1 == $res->nobjects && ($res->objects)[0]->Name eq 'ABELL 2166',
 "query result" );

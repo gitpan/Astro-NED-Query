@@ -4,7 +4,7 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 our @Fields;
 
@@ -15,24 +15,25 @@ BEGIN {
   # Astro::NED::Response::Object to create class accessors
   # at compile time.
   @Fields = ( 
-	     [ No	=> qr/no[.]/ ],
-	     [ Name	=> qr/object name/ ],
-	     [ Lat	=> qr/lat$/ ],
-	     [ Lon	=> qr/lon$/ ],
-	     [ Type	=> qr/object type/ ],
-	     [ RA	=> qr/ra$/ ],
-	     [ Dec	=> qr/dec$/ ],
-	     [ Velocity => qr{km/s} ],
-	     [ Z	=> qr/redshift z$/ ],
-	     [ VZQual	=> qr/qual$/ ],
-	     [ Distance => qr/distance/ ],
-	     [ NRefs	=> qr/number of refs/ ],
+	     [ No	=> qr/no[.]/           ],
+	     [ Name	=> qr/object name/     ],
+	     [ Lat	=> qr/lat$/            ],
+	     [ Lon	=> qr/lon$/            ],
+	     [ Type	=> qr/object type/     ],
+	     [ RA	=> qr/ra$/             ],
+	     [ Dec	=> qr/dec$/            ],
+	     [ Velocity => qr{km/s}            ],
+	     [ Z	=> qr/redshift z$/     ],
+	     [ VZQual	=> qr/qual$/           ],
+	     [ Distance => qr/distance/        ],
+	     [ NRefs	=> qr/number of refs/  ],
 	     [ NNotes	=> qr/number of notes/ ],
-	     [ NPhot	=> qr/number of phot/ ],
-	     [ NPosn	=> qr/number of posn/ ],
+	     [ NPhot	=> qr/number of phot/  ],
+	     [ NPosn	=> qr/number of posn/  ],
 	     [ NVel	=> qr{number of vel/z} ],
+	     [ NDiam	=> qr/number of diam/  ],
 	     [ NAssoc	=> qr/number of assoc/ ],
-	     [ Images	=> qr/images/ ],
+	     [ Images	=> qr/images/          ],
 	    );
 
 }

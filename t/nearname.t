@@ -26,9 +26,10 @@ $req->IncObjType( 'GClusters' => 1 );
 eval {
      $res = $req->query;
 };
-ok( !$@, "query" );
-
-ok( 1 == $res->nobjects && ($res->objects)[0]->Name eq 'ABELL 2166',
-"query result" );
+ok( !$@, "query" ) or dieag( $@ );
 
 #$_->dump foreach $res->objects;
+
+ok( $res->nobjects > 0 && ($res->objects)[0]->Name eq 'ABELL 2166',
+"   query result" );
+
