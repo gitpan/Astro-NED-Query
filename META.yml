@@ -1,15 +1,17 @@
 # http://module-build.sourceforge.net/META-spec.html
 #XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
 name:         Astro-NED-Query
-version:      0.1
+version:      0.11
 version_from: lib/Astro/NED/Query.pm
 installdirs:  site
 requires:
     Class::Accessor:               0.17
     HTML::LinkExtor:               1.31
+    HTML::Parser:                  0
     HTML::TableParser:             0.32
     Regexp::Common:                0
     Test::More:                    0.47
+    WWW::Mechanize:                0
 
 distribution_type: module
 generated_by: ExtUtils::MakeMaker version 6.21

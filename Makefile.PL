@@ -10,9 +10,11 @@ WriteMakefile(
     'PREREQ_PM'		=> {
 			    Test::More		=> 0.47,
 			    Class::Accessor	=> 0.17,
+			    HTML::Parser	=> 0,
                             HTML::TableParser	=> 0.32,
                             HTML::LinkExtor	=> 1.31,
 			    Regexp::Common	=> 0,
+			    WWW::Mechanize	=> 0,
 			   }, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM => $BasePM, # retrieve abstract from module

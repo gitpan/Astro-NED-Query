@@ -1,4 +1,4 @@
-ChangeLog
+Changes
 lib/Astro/NED/Query.pm
 lib/Astro/NED/Query/ByName.pm
 lib/Astro/NED/Query/CoordExtinct.pm
