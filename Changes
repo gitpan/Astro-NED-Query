@@ -1,5 +1,8 @@
 Revision history for Perl extension Astro::NED::Query.
 
+0.02  Thu Feb  6 17:47:46 EST 2003
+        - forgot WWW::Mechanize in Makefile.PL.  Ooops.
+
 0.01  Sun Feb  2 00:33:15 2003
 	- original version
 

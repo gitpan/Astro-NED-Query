@@ -12,6 +12,7 @@ WriteMakefile(
 			    Class::Accessor	=> 0.17,
                             HTML::TableParser	=> 0.32,
                             HTML::LinkExtor	=> 1.31,
+			    WWW::Mechanize	=> 0.35,
 			   }, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM => $BasePM, # retrieve abstract from module
