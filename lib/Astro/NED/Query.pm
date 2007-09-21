@@ -1,10 +1,31 @@
+# --8<--8<--8<--8<--
+#
+# Copyright (C) 2007 Smithsonian Astrophysical Observatory
+#
+# This file is part of Astro::NED::Query
+#
+# Astro::NED::Query is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or (at
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# -->8-->8-->8-->8--
+
 package Astro::NED::Query;
 
 use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 
 use autouse Carp => qw/ croak carp confess /;
 
@@ -12,7 +33,11 @@ use WWW::Mechanize;
 
 use constant NED_URL => 'http://nedwww.ipac.caltech.edu/index.html';
 
-our %Option = ();
+my  $Option = {};
+
+sub Option {
+    return $Option;
+}
 
 #---------------------------------------------------------------------------
 
@@ -28,22 +53,18 @@ sub new
 
   my $self = bless {}, $class;
 
-  # look at subclass's fields and options
-  {
-    no strict 'refs';
-    $self->{_Field} = \%{"${class}::Field"};
-    $self->{_Option} = { %Option, %{"${class}::Option"} };
-  }
   # default Options.
-  my ( $key, $value );
-  $self->set( $key, $value ) while ($key, $value) = each %{$self->{_Option}};
+  while ( my ($key, $value) = each %{$self->Option} )
+  {
+      $self->set( $key, $value );
+  }
 
 
-  while( ( $key, $value ) = each %{$fields} )
+  # process fields
+  while( my ( $key, $value ) = each %{$fields} )
   {
     croak( $class, '->new unknown attribute `$key' )
-      unless exists $self->{_Field}{$key} 
-                       || exists $self->{_Option}{$key};
+      unless defined $self->field($key) || defined $self->option($key);
     $self->set( $key, $value );
   }
 
@@ -68,6 +89,21 @@ sub _init
 }
 
 
+sub field {
+
+    my ( $self, $key ) = @_;
+
+    return exists $self->Field->{$key} ? $self->Field->{$key} : undef;
+}
+
+sub option {
+
+    my ( $self, $key ) = @_;
+
+    return exists $self->Option->{$key} ? $self->Option->{$key} : undef;
+}
+
+
 #---------------------------------------------------------------------------
 
 
@@ -78,10 +114,10 @@ sub set
   confess( ref $self, "->$_[0]: Wrong number of arguments" )
     unless 2 == @_;
 
-  if ( exists $self->{_Field}{$_[0]} )
+  if ( defined ( my $field = $self->field($_[0]) ) )
   {
     eval {
-      $self->{_ua}->field( $self->{_Field}{$_[0]}, $_[1] );
+      $self->{_ua}->field( $field, $_[1] );
     };
     croak( ref $self, "->$_[0]:  illegal value" )
       if $@;
@@ -99,9 +135,9 @@ sub get
   confess( ref $self, "->$_[0]: Wrong number of arguments" )
     unless 1 == @_;
 
-  if ( exists $self->{_Field}{$_[0]} )
+  if ( defined ( my $field = $self->field($_[0]) ) )
   {
-    $self->{_ua}->current_form->value( $self->{_Field}{$_[0]} );
+    $self->{_ua}->current_form->value( $field );
   }
   else
   {
@@ -119,7 +155,7 @@ sub get
 #  logical list of options is split into several so the GUI looks
 #  cleaner. this will merge them.
 
-sub setupMultiple
+sub _setupMultiple
 {
   my ( $self, $type, $alias, @names  ) = @_;
 
@@ -146,36 +182,35 @@ sub setupMultiple
 
 # steal a page (well, actually code) from Class::Accessor for inputs
 # which have multiple values
-{
-    no strict 'refs';
+sub _mkMultipleAccessor {
+    my($self, @fields) = @_;
+    my $class = ref $self || $self;
 
-    sub mkMultipleAccessor {
-        my($self, @fields) = @_;
-        my $class = ref $self || $self;
+    foreach my $field (@fields) {
+	if ( $field eq 'DESTROY' ) {
+	    require Carp;
+	    &Carp::carp("Having a data accessor named DESTROY  in ".
+			"'$class' is unwise.");
+	}
 
-        foreach my $field (@fields) {
-            if( $field eq 'DESTROY' ) {
-                require Carp;
-                &Carp::carp("Having a data accessor named DESTROY  in ".
-                             "'$class' is unwise.");
-            }
+	my $accessor = sub {
+	    my $self = shift;
 
-            my $accessor = sub {
-	                        my $self = shift;
+	    return 1 == @_ ? 
+	      $self->getMultiple( $field, @_ ) :
+		$self->setMultiple( $field, @_ );
+	};
 
-				return 1 == @_ ? 
-				  $self->getMultiple( $field, @_ ) :
-				  $self->setMultiple( $field, @_ );
-			      };
+	my $alias = "_${field}_accessor";
 
-            my $alias = "_${field}_accessor";
+	## no critic (ProhibitNoStrict)
+	no strict 'refs';
 
-            *{$class."\:\:$field"}  = $accessor
-              unless defined &{$class."\:\:$field"};
+	*{$class."\:\:$field"}  = $accessor
+	  unless defined &{$class."\:\:$field"};
 
-            *{$class."\:\:$alias"}  = $accessor
-              unless defined &{$class."\:\:$alias"};
-        }
+	*{$class."\:\:$alias"}  = $accessor
+	  unless defined &{$class."\:\:$alias"};
     }
 }
 
@@ -220,24 +255,24 @@ sub getMultiple
 
 sub possible_values
 {
-  my ( $self, $field ) = @_;
+  my ( $self, $ifield ) = @_;
 
-  defined $field or 
+  defined $ifield or
     croak( ref $self, "->possible_values: missing field name\n" );
 
   # is this a multiple value beast?
-  if ( exists  $self->{_Multiple}{$field} )
+  if ( exists  $self->{_Multiple}{$ifield} )
   {
-    return keys %{$self->{_Multiple}{$field}}
+    return keys %{$self->{_Multiple}{$ifield}}
   }
-  elsif ( exists $self->{_Field}{$field} )
+  elsif ( defined ( my $field = $self->field($ifield) ) )
   {
-    return $self->{_ua}->current_form->find_input($self->{_Field}{$field})->possible_values;
+    return $self->{_ua}->current_form->find_input($field)->possible_values;
   }
 
   else
   {
-    croak( ref $self, "->possible_values: unknown field: $field\n" );
+    croak( ref $self, "->possible_values: unknown field: $ifield\n" );
   }
 }
 
@@ -336,7 +371,7 @@ derived from this one, most of the documentation for their use
 is found here.  Documentation for the other classes will provide
 class specific details.
 
-=head1 Usage
+=head1 USAGE
 
 =head2 Constructing a query
 
@@ -423,7 +458,7 @@ the parameter values and reissue the B<query> method.
 
 =back
 
-=head1 Generic Methods
+=head1 GENERIC OBJECT METHODS
 
 All of the various B<Query> classes share the following methods.
 Make sure to read the documentation for the actual Query class which
@@ -436,6 +471,52 @@ will be used.  It contains class specific information.
 This is the object constructor.  It takes a list of keyword and value
 pairs.  The keywords may be the names of single valued query parameters,
 or may be class options.  These are documented for each Query class.
+
+=item dump
+
+Returns the current parameters as a textual representation.
+See B<HTML::Form::dump()> for more information.
+
+=begin internal_docs
+
+=item field
+
+  $form_field_name = $req->field( $parameter_name );
+
+Return the actual form field name associated with the given parameter name as
+defined by the subclass.
+
+=end internal_docs
+
+=item form
+
+  @keyw = $req->form;
+
+Returns the current parameters as a sequence of key/value pairs.
+See B<HTML::Form::form()> for more information.
+
+=item get
+
+  $req->get( $field_name );
+
+Generic method to get a field value.  Cannot be used for multiple value fields.
+
+
+=item getMultiple
+
+  $state = $req->getMultiple( $field_name, $value);
+
+Generic method to get a multiple value field's state.
+
+=begin internal_docs
+
+=item option
+
+  $option  = $req->option( $option_name );
+
+not quite sure what the point of all of this option business is.  it's not used anywhere.
+
+=end internal_docs
 
 =item possible_values
 
@@ -454,6 +535,20 @@ This method resets the parameter values to their defaults.  The default
 values are initially taken from the NED defaults, but may be changed
 with the B<set_default> method.
 
+=item set
+
+  $req->set( $field_name, $value );
+
+Generic method to set a field's value.  Cannot be used for multiple value fields.
+
+=item setMultiple
+
+  $req->setMultiple( $field_name, $value);
+  $req->setMultiple( $field_name, $value, $state );
+
+Generic method to set a multiple value field's state.  If C<$state> is
+not present or is zero then the value is removed from the field, otherwise the value is set.
+
 =item set_default
 
   $req->set_default;
@@ -469,18 +564,33 @@ the results of the query.  See the documentation for the separate
 Query classes for information on the type of container and how
 to extract data from it.
 
-=item form
+=item timeout
 
-  @keyw = $req->form;
+  $req->timeout();
+  $req->timeout( $seconds );
 
-Returns the current parameters as a sequence of key/value pairs.  Note
-that keys might be repeated which means that some values might be lost
-if the return values are assigned to a hash.
+Get/set the timeout value in seconds.  See
+B<LWP::UserAgent::timeout()> for more information.
 
 =back
 
-=head1 Constructing new Query Classes
+=begin internal_docs
 
+=head1 GENERIC CLASS METHODS
+
+=over
+
+=item Option
+
+Return a hashref of the Classes permitted options
+
+=item Field
+
+Return a hashref of the Classes permitted fields
+
+=back
+
+=end internal_docs
 
 =head2 EXPORT
 

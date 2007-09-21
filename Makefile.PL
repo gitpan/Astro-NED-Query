@@ -1,22 +1,20 @@
-use ExtUtils::MakeMaker;
-# See lib/ExtUtils/MakeMaker.pm for details of how to influence
-# the contents of the Makefile that is written.
+use strict;
+use warnings;
+use inc::Module::Install;
 
-$BasePM = 'lib/Astro/NED/Query.pm';
+name 'Astro-NED-Query';
 
-WriteMakefile(
-    'NAME'		=> 'Astro::NED::Query',
-    'VERSION_FROM'	=> $BasePM, # finds $VERSION
-    'PREREQ_PM'		=> {
-			    Test::More		=> 0.47,
-			    Class::Accessor	=> 0.17,
-			    HTML::Parser	=> 0,
-                            HTML::TableParser	=> 0.32,
-                            HTML::LinkExtor	=> 1.31,
-			    Regexp::Common	=> 0,
-			    WWW::Mechanize	=> 0,
-			   }, # e.g., Module::Name => 1.1
-    ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
-      (ABSTRACT_FROM => $BasePM, # retrieve abstract from module
-       AUTHOR     => 'Diab Jerius <djeriusA@cpan.org>') : ()),
-);
+all_from 'lib/Astro/NED/Query.pm';
+
+requires 'Class::Accessor::Class'	=> 0.17;
+requires 'HTML::Parser';
+requires 'HTML::TableParser'	=> 0.32;
+requires 'HTML::LinkExtor'	=> 1.31;
+requires 'Regexp::Common';
+requires 'WWW::Mechanize'	=> 1.22;
+
+build_requires 'Test::More';
+
+auto_install;
+
+WriteAll;

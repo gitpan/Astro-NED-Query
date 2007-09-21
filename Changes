@@ -1,3 +1,8 @@
+0.12  Thu Sep 20 19:57:38 EDT 2007
+        - make work with modern versions of WWW::Mechanize
+	- added perlcritic & pod coverage tests
+	- internal mods to clean things up a bit.
+
 2004-12-20 22:58  Diab Jerius  <djerius@cfa.harvard.edu>
 
 	* Version 0.11

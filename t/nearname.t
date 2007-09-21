@@ -13,7 +13,8 @@ ok( ! $@, "new" );
 eval { 
      $req->reset;
 };
-ok( ! $@, "reset" );
+ok( ! $@, "reset" )
+    or diag $@;
 
 my $object = 'Abell 2166';
 $req->ObjName( $object );
@@ -26,7 +27,8 @@ $req->IncObjType( 'GClusters' => 1 );
 eval {
      $res = $req->query;
 };
-ok( !$@, "query" ) or dieag( $@ );
+ok( !$@, "query" ) 
+    or diag( $@ );
 
 #$_->dump foreach $res->objects;
 

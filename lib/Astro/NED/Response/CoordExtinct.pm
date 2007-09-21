@@ -1,3 +1,24 @@
+# --8<--8<--8<--8<--
+#
+# Copyright (C) 2007 Smithsonian Astrophysical Observatory
+#
+# This file is part of Astro::NED::Query
+#
+# Astro::NED::Query is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or (at
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# -->8-->8-->8-->8--
+
 package Astro::NED::Response::CoordExtinct;
 
 use 5.006;
@@ -97,7 +118,7 @@ Astro::NED::Response::CoordExtinct - query results for a coordinates and extinct
   print $obj->Field;
 
   # initialize existing object from an HTML response
-  $obj->parse_HTML( $html );
+  $obj->parseHTML( $html );
 
 =head1 DESCRIPTION
 
@@ -138,6 +159,13 @@ As a class method, it returns a list of all possible fields.
 
 This returns the object's data as a hash, keyed off of the field names.
 Use the accessor methods if possible.
+
+=item parseHTML
+
+  $obj->parseHTML( $html );
+
+Initializes the object from the passed HTML content.  This is typically
+invoked only by B<Astro::NED::Query::CoordExtinct>.
 
 =back
 
@@ -185,6 +213,8 @@ The extinction in the given bandpass.
 =item EB-V
 
 The E(B-V) color excess.
+
+=back
 
 =head2 EXPORT
 

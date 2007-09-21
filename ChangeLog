@@ -1,0 +1,129 @@
+2007-09-20  Diab Jerius  <djerius@cfa.harvard.edu>
+
+	Tag: 0.12
+
+2007-09-20 20:06 -0400  djerius  <djerius@cfa.harvard.edu>  (fe17f71cf009 [tip])
+
+	* MANIFEST.SKIP:
+	remove more cruft
+
+2007-09-20 20:05 -0400  djerius  <djerius@cfa.harvard.edu>  (a4055b46f0e5)
+
+	* LICENSE, README, lib/Astro/NED/Query.pm,
+	lib/Astro/NED/Query/ByName.pm, lib/Astro/NED/Query/CoordExtinct.pm,
+	lib/Astro/NED/Query/NearName.pm,
+	lib/Astro/NED/Query/NearPosition.pm, lib/Astro/NED/Query/Objects.pm,
+	lib/Astro/NED/Response/CoordExtinct.pm,
+	lib/Astro/NED/Response/Object.pm, lib/Astro/NED/Response/Objects.pm:
+	updated license
+
+2007-09-20 20:04 -0400  djerius  <djerius@cfa.harvard.edu>  (4d99d1863a37)
+
+	* MANIFEST:
+	should not be controlled
+
+2007-09-20 19:56 -0400  djerius  <djerius@cfa.harvard.edu>  (29af95e77d58)
+
+	* Makefile.PL:
+	switch to Module::Install
+
+2007-09-20 19:56 -0400  djerius  <djerius@cfa.harvard.edu>  (30cb0fe91e3b)
+
+	* lib/Astro/NED/Query.pm, lib/Astro/NED/Query/ByName.pm,
+	lib/Astro/NED/Query/CoordExtinct.pm,
+	lib/Astro/NED/Query/NearName.pm,
+	lib/Astro/NED/Query/NearPosition.pm,
+	lib/Astro/NED/Response/CoordExtinct.pm,
+	lib/Astro/NED/Response/Object.pm:
+	use Class::Accessor::Class to handle class data
+
+	in order to gain access to subclass class data from the parent class
+	used symbolic references. now use Class::Accessor::Class to get at
+	it.
+
+	add docs to quiet pod-coverage.
+
+2007-09-20 19:53 -0400  djerius  <djerius@cfa.harvard.edu>  (4178155bddf7)
+
+	* t/00-load.t, t/perlcritic.t, t/pod-coverage.t, t/pod.t:
+	add standard pod and perlcritic tests
+
+2007-09-20 19:53 -0400  djerius  <djerius@cfa.harvard.edu>  (6b126583752e)
+
+	* t/byname.t, t/coordextinct.t, t/nearname.t, t/nearposn.t:
+	output the error message from failed eval{}'s
+
+2007-09-20 17:29 -0400  djerius  <djerius@cfa.harvard.edu>  (f3135c018353)
+
+	* lib/Astro/NED/Query/ByName.pm, lib/Astro/NED/Query/CoordExtinct.pm,
+	lib/Astro/NED/Query/NearName.pm,
+	lib/Astro/NED/Query/NearPosition.pm:
+	WWW::Mechanize::follow was deprecated and removed as of 1.22; bring
+	code up-to-date
+
+2007-05-02 20:53 +0000  dj  <dj>  (ad250feaae88)
+
+	* ChangeLog:
+	added ChangeLog
+
+2007-05-02 16:58 -0400  djerius  <djerius@cfa.harvard.edu>  (b54ad042dd18)
+
+	* .hgtags:
+	Added tag V0_11 for changeset 964d90d5255c
+
+2004-12-21 14:32 +0000  dj  <dj>  (964d90d5255c [V0_11])
+
+	* Changes:
+	Empty changelog
+
+2004-12-21 14:21 +0000  dj  <dj>  (5d8f906a59c5)
+
+	* MANIFEST, Makefile.PL, lib/Astro/NED/Query.pm:
+	list of required Perl modules was incomplete
+
+2004-12-21 04:13 +0000  dj  <dj>  (49136510f6b7)
+
+	* Changes, MANIFEST:
+	Empty changelog
+
+2004-12-21 03:58 +0000  dj  <dj>  (c5068441745f)
+
+	* Makefile.PL, lib/Astro/NED/Query.pm:
+	Empty changelog
+
+2004-12-21 03:58 +0000  dj  <dj>  (848ac2bff7da)
+
+	* t/byname.t, t/nearname.t, t/nearposn.t:
+	minor changes to work with current NED database results
+
+2004-12-21 03:57 +0000  dj  <dj>  (60fd3ce11704)
+
+	* lib/Astro/NED/Response/Objects.pm:
+	NED now provides diameter data
+
+2004-12-21 03:57 +0000  dj  <dj>  (8be53ebdb4ea)
+
+	* lib/Astro/NED/Query/CoordExtinct.pm,
+	lib/Astro/NED/Response/CoordExtinct.pm, t/coordextinct.t:
+	new interface to coordinate transforms and galactic extinction
+
+2007-05-02 16:57 -0400  djerius  <djerius@cfa.harvard.edu>  (1d8378b42c81)
+
+	* .hgtags:
+	Added tag initial for changeset 958abad5e702
+
+2003-02-06 16:45 +0000  dj  <dj>  (958abad5e702 [initial])
+
+	* LICENSE, MANIFEST, MANIFEST.SKIP, Makefile.PL, README,
+	lib/Astro/NED/Query.pm, lib/Astro/NED/Query/ByName.pm,
+	lib/Astro/NED/Query/NearName.pm,
+	lib/Astro/NED/Query/NearPosition.pm, lib/Astro/NED/Query/Objects.pm,
+	lib/Astro/NED/Response/Object.pm, lib/Astro/NED/Response/Objects.pm,
+	t/byname.t, t/nearname.t, t/nearposn.t:
+	Initial revision
+
+2007-05-02 16:57 -0400  djerius  <djerius@cfa.harvard.edu>  (dd602e425f8b)
+
+	* .hgignore:
+	Tailor preparing to convert repo by adding .hgignore
+

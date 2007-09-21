@@ -1,35 +1,58 @@
+# --8<--8<--8<--8<--
+#
+# Copyright (C) 2007 Smithsonian Astrophysical Observatory
+#
+# This file is part of Astro::NED::Query
+#
+# Astro::NED::Query is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or (at
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# -->8-->8-->8-->8--
+
 package Astro::NED::Query::ByName;
 
 use 5.006;
 use strict;
 use warnings;
 
-use base qw/ Astro::NED::Query::Objects Class::Accessor /;
+use base qw/ Astro::NED::Query::Objects Class::Accessor::Class /;
 
 our $VERSION = '0.01';
 
-our %Field = qw{
-	   ObjName	objname
-	   Extend	extend
-	   CoordSys	out_csys
-	   Equinox	out_equinox
-	   Sort		obj_sort
-	   Format	of
-	   ListLimit	list_limit
-	   ZVBreaker	zv_breaker
-	   ImageStamp   img_stamp
-	   };
+__PACKAGE__->mk_class_accessors( qw( Field Option ) );
 
-our %Option;
+__PACKAGE__->Field( { qw{
+			 ObjName	objname
+			 Extend		extend
+			 CoordSys	out_csys
+			 Equinox	out_equinox
+			 Sort		obj_sort
+			 Format		of
+			 ListLimit	list_limit
+			 ZVBreaker	zv_breaker
+			 ImageStamp	img_stamp
+		     } } );
 
-__PACKAGE__->mk_accessors( keys %Field,
-			   keys %Option,
-			   keys %Astro::NED::Query::Option,
+__PACKAGE__->Option( { } );
+
+__PACKAGE__->mk_accessors( keys %{__PACKAGE__->Field},
+			   keys %{__PACKAGE__->Option},
+			   keys %{Astro::NED::Query->Option},
 			 );
 
 sub _init
 {
-  $_[0]->{_ua}->follow( qr/by name/i );
+  $_[0]->{_ua}->follow_link( text_regex => qr/by name/i );
 }
 
 1;

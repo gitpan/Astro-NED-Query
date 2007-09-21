@@ -1,4 +1,16 @@
+ChangeLog
 Changes
+inc/Module/AutoInstall.pm
+inc/Module/Install.pm
+inc/Module/Install/AutoInstall.pm
+inc/Module/Install/Base.pm
+inc/Module/Install/Can.pm
+inc/Module/Install/Fetch.pm
+inc/Module/Install/Include.pm
+inc/Module/Install/Makefile.pm
+inc/Module/Install/Metadata.pm
+inc/Module/Install/Win32.pm
+inc/Module/Install/WriteAll.pm
 lib/Astro/NED/Query.pm
 lib/Astro/NED/Query/ByName.pm
 lib/Astro/NED/Query/CoordExtinct.pm
@@ -11,9 +23,14 @@ lib/Astro/NED/Response/Objects.pm
 LICENSE
 Makefile.PL
 MANIFEST			This list of files
+MANIFEST.SKIP
+META.yml
 README
+t/00-load.t
 t/byname.t
 t/coordextinct.t
 t/nearname.t
 t/nearposn.t
-META.yml                                 Module meta-data (added by MakeMaker)
+t/perlcritic.t
+t/pod-coverage.t
+t/pod.t

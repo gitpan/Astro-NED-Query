@@ -9,12 +9,14 @@ my ( $req, $res );
 eval {
       $req = Astro::NED::Query::NearPosition->new;
 };
-ok( ! $@, "new" );
+ok( ! $@, "new" )
+    or diag $@;
 
 eval { 
      $req->reset;
 };
-ok( ! $@, "reset" );
+ok( ! $@, "reset" )
+    or diag $@;
 
 $req->RA('16h28m37.0s');
 $req->Dec('+39d31m28s');
@@ -26,7 +28,8 @@ $req->IncObjType( 'GClusters' => 1 );
 eval {
      $res = $req->query;
 };
-ok( !$@, "query" );
+ok( !$@, "query" )
+    or diag $@;
 
 #$_->dump foreach $res->objects;
 

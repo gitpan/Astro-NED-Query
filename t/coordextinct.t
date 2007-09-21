@@ -9,12 +9,14 @@ my ( $req, $res );
 eval {
       $req = Astro::NED::Query::CoordExtinct->new;
 };
-ok( ! $@, "new" );
+ok( ! $@, "new" )
+    or diag $@;
 
 eval { 
      $req->reset;
 };
-ok( ! $@, "reset" );
+ok( ! $@, "reset" )
+    or diag $@;
 
 our ( $RA, $Dec, $PA ) = ( 12, 0, 35 );
 
@@ -31,7 +33,8 @@ eval {
      $res = $req->query;
 };
 
-ok( !$@, "submit query" ) or diag( $@ );
+ok( !$@, "submit query" )
+     or diag( $@ );
 
 ok( eq_hash( { $res->data },
          {

@@ -1,3 +1,24 @@
+# --8<--8<--8<--8<--
+#
+# Copyright (C) 2007 Smithsonian Astrophysical Observatory
+#
+# This file is part of Astro::NED::Query
+#
+# Astro::NED::Query is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or (at
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# -->8-->8-->8-->8--
+
 package Astro::NED::Query::NearPosition;
 
 use 5.006;
@@ -6,46 +27,48 @@ use warnings;
 
 our $VERSION = '0.01';
 
-use base qw/ Astro::NED::Query::Objects Class::Accessor /;
+use base qw/ Astro::NED::Query::Objects Class::Accessor::Class /;
 
-our %Field = qw{
-		InCoordSys	in_csys
-		InEquinox	in_equinox
-		Longitude	lon
-		Latitude	lat
-		RA		lon
-		Dec		lat
-		Radius		radius
-		OutCoordSys	out_csys
-		OutEquinox	out_equinox
-		Sort		obj_sort
-		Format		of
-		ZVBreaker	zv_breaker
-		ListLimit	list_limit
-		ImageStamp	img_stamp
-		ZConstraint	z_constraint
-		ZValue1		z_value1
-		ZValue2		z_value2
-		ZUnit		z_unit
-		ObjTypeInclude  ot_include
-		NamePrefixOp    nmp_op
-	      };
+__PACKAGE__->mk_class_accessors( qw( Field Option ) );
 
-our %Option;
+__PACKAGE__->Field( { qw{
+			 InCoordSys	in_csys
+			 InEquinox	in_equinox
+			 Longitude	lon
+			 Latitude	lat
+			 RA		lon
+			 Dec		lat
+			 Radius		radius
+			 OutCoordSys	out_csys
+			 OutEquinox	out_equinox
+			 Sort		obj_sort
+			 Format		of
+			 ZVBreaker	zv_breaker
+			 ListLimit	list_limit
+			 ImageStamp	img_stamp
+			 ZConstraint	z_constraint
+			 ZValue1	z_value1
+			 ZValue2	z_value2
+			 ZUnit		z_unit
+			 ObjTypeInclude ot_include
+			 NamePrefixOp   nmp_op
+		     }  });
 
-__PACKAGE__->mk_accessors( keys %Field,
-			   keys %Option,
-			   keys %Astro::NED::Query::Option,
+__PACKAGE__->Option( { } );
+
+__PACKAGE__->mk_accessors( keys %{__PACKAGE__->Field},
+			   keys %{__PACKAGE__->Option},
+			   keys %{Astro::NED::Query->Option},
 			 );
 
-__PACKAGE__->mkMultipleAccessor ( qw/ IncObjType ExcObjType NamePrefix / );
+__PACKAGE__->_mkMultipleAccessor ( qw/ IncObjType ExcObjType NamePrefix / );
 
 sub _init
 {
-  $_[0]->{_ua}->follow( qr/near position/i );
-  $_[0]->setupMultiple( 'option', IncObjType => qr/^in_objtypes\d+$/ );
-  $_[0]->setupMultiple( 'option', ExcObjType => qr/^ex_objtypes\d+$/ );
-  $_[0]->setupMultiple( 'option', NamePrefix => qr/^name_prefix\d+$/ );
+  $_[0]->{_ua}->follow_link( text_regex => qr/near position/i );
+  $_[0]->_setupMultiple( 'option', IncObjType => qr/^in_objtypes\d+$/ );
+  $_[0]->_setupMultiple( 'option', ExcObjType => qr/^ex_objtypes\d+$/ );
+  $_[0]->_setupMultiple( 'option', NamePrefix => qr/^name_prefix\d+$/ );
 }
 
 1;
