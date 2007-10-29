@@ -1,25 +1,18 @@
-use Test::More;
-BEGIN { plan tests => 5 };
+use Test::More tests => 4;
 
-use Astro::NED::Query::NearPosition;
-ok(1); # If we made it this far, we're ok.
+BEGIN {
+      use_ok( "Astro::NED::Query::NearPosition" );
+}
 
 my ( $req, $res );
 
 eval {
-      $req = Astro::NED::Query::NearPosition->new;
+    $req = Astro::NED::Query::NearPosition->new( 
+                                                RA => '16h28m37.0s',
+                                                Dec => '+39d31m28s' );
 };
 ok( ! $@, "new" )
     or diag $@;
-
-eval { 
-     $req->reset;
-};
-ok( ! $@, "reset" )
-    or diag $@;
-
-$req->RA('16h28m37.0s');
-$req->Dec('+39d31m28s');
 
 $req->Radius( 5 );
 $req->ObjTypeInclude( 'ANY' );

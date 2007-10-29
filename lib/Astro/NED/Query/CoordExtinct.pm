@@ -27,36 +27,35 @@ use warnings;
 
 use Astro::NED::Response::CoordExtinct;
 
-our $VERSION = '0.01';
+our $VERSION = '0.20';
 
 
 use base qw/ Astro::NED::Query::Objects Class::Accessor::Class /;
 
-__PACKAGE__->mk_class_accessors( qw( Field Option ) );
+__PACKAGE__->mk_class_accessors( qw( Field ) );
 
 __PACKAGE__->Field( { qw{
-		InCoordSys	in_csys
-		InEquinox	in_equinox
-		Longitude	lon
-		Latitude	lat
-		RA		lon
-		Dec		lat
-		PA		pa
-		OutCoordSys	out_csys
-		OutEquinox	out_equinox
-	      }} );
-
-__PACKAGE__->Option( { } );
-
+                InCoordSys      in_csys
+                InEquinox       in_equinox
+                Longitude       lon
+                Latitude        lat
+                RA              lon
+                Dec             lat
+                PA              pa
+                OutCoordSys     out_csys
+                OutEquinox      out_equinox
+              }} );
 
 __PACKAGE__->mk_accessors( keys %{__PACKAGE__->Field},
-			   keys %{__PACKAGE__->Option},
-			   keys %{Astro::NED::Query->Option},
-			 );
+                         );
 
 sub _init
 {
-  $_[0]->{_ua}->follow_link( text_regex => qr/coordinate transformation/i );
+    my ( $self ) = @_;
+
+    $self->{_ua}->follow_link( text_regex => qr/coordinate transformation/i );
+
+    return;
 }
 
 sub _query {}
@@ -76,17 +75,17 @@ sub _parse_query
 
   else
   {
-    my $pfx = ref($self) . "->query: ";
+    my $pfx = ref($self) . '->query: ';
     my @stuff;
 
     require HTML::Parser;
-    my $p = HTML::Parser->new( text_h => 
-			    [ sub { push @stuff, 
-				      grep { ! /|(^\s*Search\ Results)
+    my $p = HTML::Parser->new( text_h =>
+                            [ sub { push @stuff,
+                                      grep { ! /|(^\s*Search\ Results)
                                                 |(^\s*NASA.*)
-						|(^\s*Back to NED Home)
+                                                |(^\s*Back to NED Home)
                                                 |(^$)/x }
-				      split( /\n+/, shift ) }, 'dtext' ] );
+                                      split( /\n+/, shift ) }, 'dtext' ] );
     $p->unbroken_text(1);
     $p->parse( $_[0] );
     $p->eof;
@@ -135,13 +134,12 @@ documented here) and how to set or get the search parameters.
 =item new
 
   $req = Astro::NED::Query::CoordExtinct->new( keyword1 => $value1,
-				   keyword2 => $value2, ... );
+                                   keyword2 => $value2, ... );
 
 
 Queries are constructed using the B<new> method, which is passed a
 list of keyword and value pairs.  The keywords may be the names of
-single valued query parameters, or may be class options.  There are no
-options I<specific> to B<Astro::NED::Query::CoordExtinct>.
+single valued query parameters.
 
 Search parameters may also be set or queried using the accessor methods;
 see L<Astro::NED::Query>.

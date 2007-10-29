@@ -25,7 +25,7 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '0.12';
+our $VERSION = '0.20';
 
 use autouse Carp => qw/ croak carp confess /;
 
@@ -33,19 +33,13 @@ use WWW::Mechanize;
 
 use constant NED_URL => 'http://nedwww.ipac.caltech.edu/index.html';
 
-my  $Option = {};
-
-sub Option {
-    return $Option;
-}
-
 #---------------------------------------------------------------------------
 
 
 # this is designed to be invoked by a subclass.
 sub new
 {
-  my ( $class, $fields ) = @_;
+  my ( $class, %fields ) = @_;
   $class = ref $class || $class;
 
   croak( __PACKAGE__, '->new: illegal call to abstract base class' )
@@ -53,39 +47,32 @@ sub new
 
   my $self = bless {}, $class;
 
-  # default Options.
-  while ( my ($key, $value) = each %{$self->Option} )
-  {
-      $self->set( $key, $value );
-  }
-
-
-  # process fields
-  while( my ( $key, $value ) = each %{$fields} )
-  {
-    croak( $class, '->new unknown attribute `$key' )
-      unless defined $self->field($key) || defined $self->option($key);
-    $self->set( $key, $value );
-  }
-
-
   # grab top level page
   $self->{_ua} = WWW::Mechanize->new();
   $self->{_ua}->get( NED_URL );
 
-  croak( $class, "->new: error accessing NED: ", 
+  croak( $class, '->new: error accessing NED: ',
 	 $self->{_ua}->res->status_line )
     if $self->{_ua}->res->is_error;
 
   $self->_init;
-  $self->set_default;
+  $self->save_as_defaults;
 
-  $self;
+  # process fields
+  while( my ( $key, $value ) = each %fields )
+  {
+    croak( $class, "->new unknown attribute: `$key'" )
+      unless defined $self->field($key);
+    $self->set( $key, $value );
+  }
+
+  return $self;
 }
 
 sub _init
 {
-  croak( ref $_[0], ': internal implementation error; _init undefined' );
+    my ( $self ) = @_;
+    croak( ref $self, ': internal implementation error; _init undefined' );
 }
 
 
@@ -96,53 +83,45 @@ sub field {
     return exists $self->Field->{$key} ? $self->Field->{$key} : undef;
 }
 
-sub option {
-
-    my ( $self, $key ) = @_;
-
-    return exists $self->Option->{$key} ? $self->Option->{$key} : undef;
-}
-
 
 #---------------------------------------------------------------------------
 
 
 sub set
 {
-  my $self = shift;
+  my ( $self, $name, $value ) = @_;
 
-  confess( ref $self, "->$_[0]: Wrong number of arguments" )
-    unless 2 == @_;
+  confess( ref $self, '->set: Wrong number of arguments' )
+    unless 3 == @_;
 
-  if ( defined ( my $field = $self->field($_[0]) ) )
+  if ( defined ( my $field = $self->field($name) ) )
   {
     eval {
-      $self->{_ua}->field( $field, $_[1] );
+      $self->{_ua}->field( $field, $value );
     };
-    croak( ref $self, "->$_[0]:  illegal value" )
+    croak( ref $self, "->set($name):  illegal value" )
       if $@;
-  } 
+  }
   else
   {
-    $self->{$_[0]} = $_[1];
+    $self->{$name} = $value;
   }
+
+  return;
 }
 
 sub get
 {
-  my $self = shift;
+  my ( $self, $name ) = @_;
 
-  confess( ref $self, "->$_[0]: Wrong number of arguments" )
-    unless 1 == @_;
+  confess( ref $self, '->get: Wrong number of arguments' )
+    unless defined $name;
 
-  if ( defined ( my $field = $self->field($_[0]) ) )
-  {
-    $self->{_ua}->current_form->value( $field );
-  }
-  else
-  {
-    $self->{$_[0]};
-  }
+  my $field = $self->field($name);
+
+  return defined($field)
+     ? $self->{_ua}->current_form->value( $field )
+     : $self->{$name};
 }
 
 #---------------------------------------------------------------------------
@@ -178,6 +157,8 @@ sub _setupMultiple
   }
 
   $self->{_Multiple}{$alias} = \%input;
+
+  return;
 }
 
 # steal a page (well, actually code) from Class::Accessor for inputs
@@ -189,14 +170,14 @@ sub _mkMultipleAccessor {
     foreach my $field (@fields) {
 	if ( $field eq 'DESTROY' ) {
 	    require Carp;
-	    &Carp::carp("Having a data accessor named DESTROY  in ".
+	    Carp::carp('Having a data accessor named DESTROY  in '.
 			"'$class' is unwise.");
 	}
 
 	my $accessor = sub {
 	    my $self = shift;
 
-	    return 1 == @_ ? 
+	    return 1 == @_ ?
 	      $self->getMultiple( $field, @_ ) :
 		$self->setMultiple( $field, @_ );
 	};
@@ -212,43 +193,47 @@ sub _mkMultipleAccessor {
 	*{$class."\:\:$alias"}  = $accessor
 	  unless defined &{$class."\:\:$alias"};
     }
+
+    return;
 }
 
 sub setMultiple
 {
-  my $self = shift;
+  my ( $self, $name, $value, $state ) = @_;
 
-  confess( "Wrong number of arguments\n" )
-    unless @_ == 3;
+  croak( ref $self, "->setMultiple: wrong number of arguments\n" )
+    unless @_ == 4;
 
-  confess( "Illegal value for $_[0]: `$_[1]'\n" )
-    unless exists $self->{_Multiple}{$_[0]}{$_[1]};
+  croak( ref $self, "->setMultiple: illegal value for $name: `$value'\n" )
+    unless exists $self->{_Multiple}{$name}{$value};
 
-  my $input = $self->{_Multiple}{$_[0]}{$_[1]};
+  my $input = $self->{_Multiple}{$name}{$value};
 
-  if ( defined $_[2] && $_[2] )
+  if ( defined $state && $state )
   {
-    $input->value( $_[1] );
+    $input->value( $value );
   }
   else
  {
     $input->value( undef );
   }
+
+  return;
 }
 
 sub getMultiple
 {
-  my $self = shift;
+  my ( $self, $name, $value ) = @_;
 
   confess( "Wrong number of arguments\n" )
-    unless @_ == 2;
+    unless @_ == 3;
 
-  confess( "Illegal value for $_[0]: `$_[1]'\n" )
-    unless exists $self->{_Multiple}{$_[0]}{$_[1]};
+  croak( ref $self, "->getMultiple: illegal value for $name: `$value'\n" )
+    unless exists $self->{_Multiple}{$name}{$value};
 
-  my $input = $self->{_Multiple}{$_[0]}{$_[1]};
+  my $input = $self->{_Multiple}{$name}{$value};
 
-  $input->value;
+  return $input->value;
 }
 
 #---------------------------------------------------------------------------
@@ -280,30 +265,50 @@ sub possible_values
 
 sub dump
 {
-  $_[0]->{_ua}->current_form->dump;
+    my ( $self ) = @_;
+
+    $self->{_ua}->current_form->dump;
+
+    return;
 }
 
 sub form
 {
-  $_[0]->{_ua}->current_form->form;
+    my ( $self ) = @_;
+    return $self->{_ua}->current_form->form;
 }
 
 #---------------------------------------------------------------------------
 
-sub set_default
+sub save_as_defaults
 {
   my $self = shift;
 
   # save current form field values.
   my @ivalues = map { [ $_ , $_->value ] } $self->{_ua}->current_form->inputs;
   $self->{_ivalues} = \@ivalues;
+
+  return;
 }
 
-sub reset
+sub set_to_defaults
 {
   my $self = shift;
-  $_[0]->value($_[1]) foreach grep { exists $_[1] } @{$self->{_ivalues}};
+
+  for my $field ( @{$self->{_ivalues}} )
+  {
+      my ( $obj, $value ) = @{$field};
+      $obj->value($value)
+	if defined $value;
+  }
+
+  return;
 }
+
+# alias old names for compatibility
+*Astro::NED::Query::reset = *set_to_defaults;
+*Astro::NED::Query::set_default = *save_as_defaults;
+
 
 #---------------------------------------------------------------------------
 
@@ -327,22 +332,31 @@ sub query
 
   my $content = $ua->content;
   $ua->back;
-  $self->_parse_query( $content );
+
+  return $self->_parse_query( $content );
 }
 
 sub _query
 {
-  croak( ref $_[0], ': internal implementation error; _query undefined' );
+    my ( $self ) = @_;
+    croak( $self, ': internal implementation error; _query undefined' );
 }
 
 sub _parse_query
 {
-  croak( ref $_[0], ': internal implementation error; _parse_query undefined' );
+    my ( $self ) = @_;
+    croak( ref $self,
+	   ': internal implementation error; _parse_query undefined' );
 }
 
 #---------------------------------------------------------------------------
 
-sub timeout { shift->{_ua}->timeout( @_ ) }
+sub timeout
+{
+    my ( $self, @args ) = @_;
+
+    return $self->{_ua}->timeout( @args );
+}
 
 #---------------------------------------------------------------------------
 1;
@@ -376,13 +390,13 @@ class specific details.
 =head2 Constructing a query
 
 Queries are constructed by creating a query object.  The object should
-be created in one of the classes listed above.  For brevity in the
-following documentation, it will shown as being in the
-B<Astro::NED::Query> class. I<Don't use this in actual code!>.  You
-cannot construct a pure B<Astro::NED::Query> object.
+be created in one of the classes listed above.  _You cannot construct a
+pure B<Astro::NED::Query> object. 
 
-  $query = Astro::NED::Query->new( Field1 => $value1,
-                                   Field2 => $value2, ... );
+For example, the construct a C<by name> query, 
+
+  $query = Astro::NED::Query::ByName->new( Field1 => $value1,
+                                           Field2 => $value2, ... );
 
 This constructs a query, setting the query parameters B<Field1> and
 B<Field2>.  It does I<not> send off the query.  Only single valued
@@ -417,8 +431,8 @@ switch.  The value returned by the accessor will be empty if the
 field contains that value, else it is the actual value.
 
 All of the parameters may be set to their default state by calling the
-B<reset> method.  To make the default values look like the current
-values, use the B<set_default> method.
+B<set_to_defaults> method.  To make the default values look like the
+current values, use the B<save_as_defaults> method.
 
 Some parameters may have values which are restricted to a given set.
 To determine what the available values are, use the B<possible_values>
@@ -469,8 +483,8 @@ will be used.  It contains class specific information.
 =item new
 
 This is the object constructor.  It takes a list of keyword and value
-pairs.  The keywords may be the names of single valued query parameters,
-or may be class options.  These are documented for each Query class.
+pairs.  The keywords may be the names of single valued query
+parameters.  These are documented for each Query class.
 
 =item dump
 
@@ -508,16 +522,6 @@ Generic method to get a field value.  Cannot be used for multiple value fields.
 
 Generic method to get a multiple value field's state.
 
-=begin internal_docs
-
-=item option
-
-  $option  = $req->option( $option_name );
-
-not quite sure what the point of all of this option business is.  it's not used anywhere.
-
-=end internal_docs
-
 =item possible_values
 
   @values = $req->possible_values( $field_name );
@@ -527,13 +531,19 @@ is only useful for parameters whose values are limited to a specific
 set of values.  For other parameters, an empty list is returned.
 
 
+=item set_to_defaults
+
+  $req->set_to_defaults;
+
+This method sets the parameter values to their defaults.  The default
+values are initially taken from the NED defaults, but may be changed
+with the B<save_as_defaults> method.
+
+=begin podfool
+
 =item reset
 
-  $req->reset;
-
-This method resets the parameter values to their defaults.  The default
-values are initially taken from the NED defaults, but may be changed
-with the B<set_default> method.
+=end  podfool
 
 =item set
 
@@ -549,11 +559,17 @@ Generic method to set a field's value.  Cannot be used for multiple value fields
 Generic method to set a multiple value field's state.  If C<$state> is
 not present or is zero then the value is removed from the field, otherwise the value is set.
 
+=item save_as_defaults
+
+  $req->save_as_defaults;
+
+This saves the current parameter values as the default values.
+
+=begin podfool
+
 =item set_default
 
-  $req->set_default;
-
-This sets the current parameter values as the default values.
+=end  podfool
 
 =item query
 
@@ -579,10 +595,6 @@ B<LWP::UserAgent::timeout()> for more information.
 =head1 GENERIC CLASS METHODS
 
 =over
-
-=item Option
-
-Return a hashref of the Classes permitted options
 
 =item Field
 

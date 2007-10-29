@@ -27,32 +27,32 @@ use warnings;
 
 use base qw/ Astro::NED::Query::Objects Class::Accessor::Class /;
 
-our $VERSION = '0.01';
+our $VERSION = '0.20';
 
-__PACKAGE__->mk_class_accessors( qw( Field Option ) );
+__PACKAGE__->mk_class_accessors( qw( Field ) );
 
 __PACKAGE__->Field( { qw{
-			 ObjName	objname
-			 Extend		extend
-			 CoordSys	out_csys
-			 Equinox	out_equinox
-			 Sort		obj_sort
-			 Format		of
-			 ListLimit	list_limit
-			 ZVBreaker	zv_breaker
-			 ImageStamp	img_stamp
-		     } } );
-
-__PACKAGE__->Option( { } );
+                         ObjName        objname
+                         Extend         extend
+                         CoordSys       out_csys
+                         Equinox        out_equinox
+                         Sort           obj_sort
+                         Format         of
+                         ListLimit      list_limit
+                         ZVBreaker      zv_breaker
+                         ImageStamp     img_stamp
+                     } } );
 
 __PACKAGE__->mk_accessors( keys %{__PACKAGE__->Field},
-			   keys %{__PACKAGE__->Option},
-			   keys %{Astro::NED::Query->Option},
-			 );
+                         );
 
 sub _init
 {
-  $_[0]->{_ua}->follow_link( text_regex => qr/by name/i );
+    my ( $self ) = @_;
+
+    $self->{_ua}->follow_link( text_regex => qr/by name/i );
+
+    return;
 }
 
 1;
@@ -90,12 +90,11 @@ documented here) and how to set or get the search parameters.
 =item new
 
   $req = Astro::NED::Query::ByName->new( keyword1 => $value1,
-				 keyword2 => $value2, ... );
+                                 keyword2 => $value2, ... );
 
 Queries are constructed using the B<new> method, which is passed a
 list of keyword and value pairs.  The keywords may be the names of
-single valued query parameters, or may be class options.  There are no
-options I<specific> to B<Astro::NED::Query::ByName>.
+single valued query parameters.
 
 Search parameters may also be set or queried using the accessor methods;
 see L<Astro::NED::Query>.

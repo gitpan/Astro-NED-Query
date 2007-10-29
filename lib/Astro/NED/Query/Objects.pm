@@ -25,7 +25,7 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.20';
 
 use autouse Carp => qw/ croak /;
 use base qw/ Astro::NED::Query /;
@@ -34,9 +34,13 @@ use Astro::NED::Response::Objects;
 
 sub _query
 {
-  $_[0]->Format( 'table' );
-  $_[0]->ListLimit( 1 );
-  $_[0]->ImageStamp( 'NO' );
+    my ( $self ) = @_;
+
+    $self->Format( 'table' );
+    $self->ListLimit( 1 );
+    $self->ImageStamp( 'NO' );
+
+    return;
 }
 
 sub _parse_query
@@ -61,7 +65,7 @@ sub _parse_query
 
   else
   {
-    my $pfx = ref($self) . "->query: ";
+    my $pfx = ref($self) . '->query: ';
     my @stuff;
 
 #    push @stuff, "error in query:";
@@ -71,8 +75,8 @@ sub _parse_query
 #      while ($key, $value) = splice(@keyw, 0, 2 );
 
     require HTML::Parser;
-    my $p = HTML::Parser->new( text_h => 
-			    [ sub { push @stuff, 
+    my $p = HTML::Parser->new( text_h =>
+			    [ sub { push @stuff,
 				      grep { ! /NED\ Home
                                                 |Search\ Results
                                                 |(^NASA.*BASE$)
@@ -84,6 +88,8 @@ sub _parse_query
 
     croak( $pfx, join( "\n$pfx", @stuff ), "\n" );
   }
+
+  return;
 }
 
 1;

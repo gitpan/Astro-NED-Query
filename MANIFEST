@@ -18,6 +18,7 @@ lib/Astro/NED/Query/NearName.pm
 lib/Astro/NED/Query/NearPosition.pm
 lib/Astro/NED/Query/Objects.pm
 lib/Astro/NED/Response/CoordExtinct.pm
+lib/Astro/NED/Response/Fields.pm
 lib/Astro/NED/Response/Object.pm
 lib/Astro/NED/Response/Objects.pm
 LICENSE
@@ -27,6 +28,7 @@ MANIFEST.SKIP
 META.yml
 README
 t/00-load.t
+t/backwards.t
 t/byname.t
 t/coordextinct.t
 t/nearname.t

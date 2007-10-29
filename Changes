@@ -1,3 +1,17 @@
+0.20  Mon Oct 29 18:54:53 EDT 2007
+
+	* Astro::Ned::Query::reset and set_default methods are now
+	  set_to_defaults and save_as_defaults.  The old method names are
+	  now deprecated.
+	
+	* Astro::Ned::Query::set_to_defaults should actually do something now.
+	
+	* passing field values via the Astro::Ned::Query::XXX constructor
+	  didn't work.
+	
+	* internal and test cleanups to modernize things and make
+	  perlcritic --brutal happier
+	
 0.12  Thu Sep 20 19:57:38 EDT 2007
         - make work with modern versions of WWW::Mechanize
 	- added perlcritic & pod coverage tests

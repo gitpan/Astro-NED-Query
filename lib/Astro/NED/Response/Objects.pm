@@ -25,40 +25,9 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '0.02';
+our $VERSION = '0.20';
 
-our @Fields;
-
-BEGIN {
-
-  # mapping between HTML table column names and Object field names
-  # These must be defined in a BEGIN as they are used by
-  # Astro::NED::Response::Object to create class accessors
-  # at compile time.
-  @Fields = ( 
-	     [ No	=> qr/no[.]/           ],
-	     [ Name	=> qr/object name/     ],
-	     [ Lat	=> qr/lat$/            ],
-	     [ Lon	=> qr/lon$/            ],
-	     [ Type	=> qr/object type/     ],
-	     [ RA	=> qr/ra$/             ],
-	     [ Dec	=> qr/dec$/            ],
-	     [ Velocity => qr{km/s}            ],
-	     [ Z	=> qr/redshift z$/     ],
-	     [ VZQual	=> qr/qual$/           ],
-	     [ Distance => qr/distance/        ],
-	     [ NRefs	=> qr/number of refs/  ],
-	     [ NNotes	=> qr/number of notes/ ],
-	     [ NPhot	=> qr/number of phot/  ],
-	     [ NPosn	=> qr/number of posn/  ],
-	     [ NVel	=> qr{number of vel/z} ],
-	     [ NDiam	=> qr/number of diam/  ],
-	     [ NAssoc	=> qr/number of assoc/ ],
-	     [ Images	=> qr/images/          ],
-	    );
-
-}
-
+use Astro::NED::Response::Fields;
 use Astro::NED::Response::Object;
 
 
@@ -75,33 +44,41 @@ sub new
 	     };
   bless $self, $class;
 
-  $self;
+  return $self;
 }
 
 #---------------------------------------------------------------------------
 
-sub objects { @{$_[0]{objects}} }
+sub objects {
+    my ( $self ) = @_;
 
-sub nobjects { scalar @{$_[0]{objects}} }
+    return @{$self->{objects}};
+ }
+
+sub nobjects {
+    my ( $self ) = @_;
+
+    return scalar @{$self->{objects}};
+}
 
 sub addobject
 {
-  my $self = shift; 
+  my ( $self, @objects )  = @_;
 
   croak( __PACKAGE__, '->addobject: object is not of type Astro::NED::Response::Object' )
-    if grep { ! $_->isa( 'Astro::NED::Response::Object' ) } @_;
+    if grep { ! $_->isa( 'Astro::NED::Response::Object' ) } @objects;
 
-  push @{$self->{objects}}, @_;
+  push @{$self->{objects}}, @objects;
 
-  scalar @{$self->{objects}}
+  return $self->nobjects;
 }
+
 
 #---------------------------------------------------------------------------
 
 
 sub parseHTML
 {
-
   require HTML::LinkExtor;
   require HTML::TableParser;
 
@@ -114,11 +91,14 @@ sub parseHTML
   my $p = HTML::LinkExtor->new;
   $p->parse( $_[0]);
 
-  my @links = grep { /search_type=Obj_id/i } map { $_->[2] } $p->links;
+  ## no critic (AccessOfPrivateData)
+  # HTML::LinkExtor returns a list of arrayrefs, not objects.
+  my @links = grep { /search_type=Obj_id/i } map { $_->[2] } $p->links ;
+  ## use critic
 
   my @cols;
 
-  $p = HTML::TableParser->new( 
+  $p = HTML::TableParser->new(
      [{
        cols => qr/Object Type/,
        DecodeNBSP => 1,
@@ -128,11 +108,17 @@ sub parseHTML
 	 for my $colname ( @{$_[2]} )
 	 {
 	   $colname = lc $colname;
-	   my @matches = grep { $colname =~ $_->[1] } @Fields;
+
+	   ## no critic (AccessOfPrivateData)
+	   # @Fields is a list of arrayrefs, not objects.
+	   my @matches = grep { $colname =~ $_->[1] }
+	                      Astro::NED::Response::Fields::fields();
+	   ## use critic
+
 	   if ( 1 != @matches )
 	   {
 	     require Carp;
-	     Carp::croak( __PACKAGE__, 
+	     Carp::croak( __PACKAGE__,
 			  "::internal error; multiple or zero column name matches for $colname\n ");
 	   }
 	   push @cols, $matches[0][0];
@@ -152,25 +138,8 @@ sub parseHTML
   );
 
   $p->parse( $_[0] );
-}
 
-#---------------------------------------------------------------------------
-
-# the following provide support for Object::Iterate
-
-sub __init__
-{
-  $_[0]{curr_object} = -1;
-}
-
-sub __more__
-{
-  $_[0]{curr_object} + 1 < @{$_[0]{objects}};
-}
-
-sub __next__
-{
-  $_[0]{object}[++$_[0]{curr_object}];
+  return;
 }
 
 #---------------------------------------------------------------------------
@@ -211,7 +180,7 @@ B<Astro::NED::Response::Object> objects.
 The most useful methods for the general user are the B<nobjects> and
 B<objects> methods.
 
-=head2 Methods
+=head2 Object Methods
 
 =over
 
@@ -236,13 +205,13 @@ add an object of type B<Astro::NED::Response::Object>.
 
 =item nobjects
 
-  $nobjs = $objs->nobjects
+  $nobjs = $objs->nobjects;
 
 returns the number of objects in the container
 
 =item objects
 
-  @objects = $objs->objects
+  @objects = $objs->objects;
 
 returns the objects as a Perl list.
 

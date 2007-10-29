@@ -1,33 +1,25 @@
-use Test::More;
-BEGIN { plan tests => 8 };
+use Test::More tests => 7;
 
-use Astro::NED::Query::CoordExtinct;
-ok(1); # If we made it this far, we're ok.
+BEGIN {
+      use_ok( "Astro::NED::Query::CoordExtinct" );
+}
 
 my ( $req, $res );
+my ( $RA, $Dec, $PA ) = ( 12, 0, 35 );
+
 
 eval {
-      $req = Astro::NED::Query::CoordExtinct->new;
+      $req = Astro::NED::Query::CoordExtinct->new( 
+                                                  RA => $RA,
+                                                  Dec => $Dec,
+                                                  PA => $PA );
 };
 ok( ! $@, "new" )
     or diag $@;
 
-eval { 
-     $req->reset;
-};
-ok( ! $@, "reset" )
-    or diag $@;
-
-our ( $RA, $Dec, $PA ) = ( 12, 0, 35 );
-
-$req->RA( $RA );
-ok( $req->RA eq $RA, "set RA" );
-
-$req->Dec( $Dec );
-ok( $req->Dec eq $Dec, "set Dec" );
-
-$req->PA( 35 );
-ok( $req->PA eq $PA, "set PA" );
+ok( $req->RA  eq $RA,  "get RA" );
+ok( $req->Dec eq $Dec, "get Dec" );
+ok( $req->PA  eq $PA,  "get PA" );
 
 eval {
      $res = $req->query;

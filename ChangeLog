@@ -1,8 +1,88 @@
-2007-09-20  Diab Jerius  <djerius@cfa.harvard.edu>
+2007-10-29  Diab Jerius  <djerius@cfa.harvard.edu>
 
-	Tag: 0.12
+	Tag: 0.20
 
-2007-09-20 20:06 -0400  djerius  <djerius@cfa.harvard.edu>  (fe17f71cf009 [tip])
+2007-10-29 19:17 -0400  djerius  <djerius@cfa.harvard.edu>  (5cf868e8406a [tip])
+
+	* lib/Astro/NED/Query.pm, t/backwards.t:
+	backwards compatibility with reset & set_default
+
+2007-10-29 18:56 -0400  djerius  <djerius@cfa.harvard.edu>  (eb40756e5321)
+
+	* lib/Astro/NED/Query.pm:
+	minor doc fix
+
+2007-10-29 18:21 -0400  djerius  <djerius@cfa.harvard.edu>  (aa5c6325940c)
+
+	* t/byname.t, t/coordextinct.t, t/nearname.t, t/nearposn.t:
+	modernized. use constructor to set field values.
+
+2007-10-29 18:20 -0400  djerius  <djerius@cfa.harvard.edu>  (1c2a42bc65be)
+
+	* lib/Astro/NED/Query.pm:
+	constructor didn't follow published API for specifying fields
+
+	new() expected a hashref, rather than a hash.
+
+2007-10-29 18:09 -0400  djerius  <djerius@cfa.harvard.edu>  (6f937d458b03)
+
+	* lib/Astro/NED/Query.pm, lib/Astro/NED/Query/ByName.pm,
+	lib/Astro/NED/Query/CoordExtinct.pm,
+	lib/Astro/NED/Query/NearName.pm,
+	lib/Astro/NED/Query/NearPosition.pm, lib/Astro/NED/Query/Objects.pm,
+	lib/Astro/NED/Response/CoordExtinct.pm,
+	lib/Astro/NED/Response/Fields.pm, lib/Astro/NED/Response/Object.pm,
+	lib/Astro/NED/Response/Objects.pm:
+	perlcritic fixups
+
+2007-10-29 17:45 -0400  djerius  <djerius@cfa.harvard.edu>  (c0a189ecd28a)
+
+	* lib/Astro/NED/Query.pm, t/byname.t, t/coordextinct.t, t/nearname.t,
+	t/nearposn.t:
+	fix to use save_as_defaults/set_to_defaults instead of old routines
+
+2007-10-29 16:03 -0400  djerius  <djerius@cfa.harvard.edu>  (3c5055e11e2c)
+
+	* lib/Astro/NED/Query.pm:
+	fix broken reset(); rename reset to set_to_defaults & set_default to
+	set_as_defaults
+
+	the reset function was poorly named and quite broken. to
+	disambiguate it and the set_default function, they were renamed to
+	something more mnemonic.
+
+2007-10-29 15:54 -0400  djerius  <djerius@cfa.harvard.edu>  (21a39d6f5caf)
+
+	* lib/Astro/NED/Query.pm:
+	fix perlcritic warnings
+
+2007-10-29 15:39 -0400  djerius  <djerius@cfa.harvard.edu>  (47c03c348278)
+
+	* lib/Astro/NED/Response/Fields.pm, lib/Astro/NED/Response/Object.pm,
+	lib/Astro/NED/Response/Objects.pm:
+	abstract access to response object fields avoid mutual inclusion;
+	quiet perlcritic
+
+2007-10-29 14:09 -0400  djerius  <djerius@cfa.harvard.edu>  (1d9f1d64995c)
+
+	* lib/Astro/NED/Query.pm, lib/Astro/NED/Query/ByName.pm,
+	lib/Astro/NED/Query/CoordExtinct.pm,
+	lib/Astro/NED/Query/NearName.pm,
+	lib/Astro/NED/Query/NearPosition.pm:
+	remove class Option mechanism; it was never used. it looks like it
+	isn't implemented correctly anyway.
+
+2007-09-20 20:44 -0400  djerius  <djerius@cfa.harvard.edu>  (85c78449e451)
+
+	* .hgtags:
+	Added tag 0.12 for changeset f44fa658dacb
+
+2007-09-20 20:44 -0400  djerius  <djerius@cfa.harvard.edu>  (f44fa658dacb [0.12])
+
+	* ChangeLog, Changes, lib/Astro/NED/Query.pm:
+	update for release
+
+2007-09-20 20:06 -0400  djerius  <djerius@cfa.harvard.edu>  (fe17f71cf009)
 
 	* MANIFEST.SKIP:
 	remove more cruft

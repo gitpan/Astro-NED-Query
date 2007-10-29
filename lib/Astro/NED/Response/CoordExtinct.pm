@@ -27,13 +27,13 @@ use warnings;
 
 use Regexp::Common;
 
-our $VERSION = '0.01';
+our $VERSION = '0.20';
 
 use base qw/ Class::Accessor /;
 
-our @Bandpasses = qw/ U B V R I J H K L' /;
+my @Bandpasses = qw/ U B V R I J H K L' /;
 
-our @Fields = ( qw/ RA Dec Lat Lon PA EB-V/, @Bandpasses );
+my @Fields = ( qw/ RA Dec Lat Lon PA EB-V/, @Bandpasses );
 
 __PACKAGE__->mk_ro_accessors( @Fields );
 
@@ -45,28 +45,34 @@ sub dump
 
   $fh = \*STDOUT unless defined $fh;
 
-  print $fh "$_: ", defined $self->get($_) ? $self->get($_) : 'undef', "\n"
+  print {$fh} "$_: ", defined $self->get($_) ? $self->get($_) : 'undef', "\n"
     foreach @Fields;
+
+  return;
 }
 
 sub fields
 {
-  # object method
-  if ( ref $_[0] )
-  {
-    return grep { defined $_[0]->get($_) } @Fields
-  }
+    my ( $self ) = @_;
 
-  # class method
-  else
-  {
-    return @Fields;
-  }
+    # object method
+    if ( ref $self )
+    {
+        return grep { defined $self->get($_) } @Fields
+    }
+
+    # class method
+    else
+    {
+        return @Fields;
+    }
 }
 
 sub data
 {
-  %{$_[0]};
+    my ( $self ) = @_;
+
+    return %{$self};
 }
 
 sub parseHTML
@@ -88,17 +94,20 @@ sub parseHTML
 
   for my $bandpass ( @Bandpasses )
   {
-    ( $self->{$bandpass} ) = $text =~ /^$bandpass\s*\(.*\)\s+($RE{num}{real})/m;
+    ( $self->{$bandpass} ) =
+      $text =~ /^$bandpass\s*\(.*\)\s+($RE{num}{real})/m;
   }
 
   @{$self}{qw/ Lat Lon PA/} =
-    $text =~ /^Output:.*\n+
-	    ($RE{num}{real})\s+
-	    ($RE{num}{real})\s+
-	    ($RE{num}{real})/mx;
+     $text =~ /^Output:.*\n+
+               ($RE{num}{real})\s+
+               ($RE{num}{real})\s+
+               ($RE{num}{real})/mx;
 
   $self->{RA}  = $self->{Lat};
   $self->{Dec} = $self->{Lon};
+
+  return;
 }
 
 1;

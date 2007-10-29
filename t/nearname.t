@@ -1,23 +1,17 @@
-use Test::More;
-BEGIN { plan tests => 6 };
-use Astro::NED::Query::NearName;
-ok(1); # If we made it this far, we're ok.
+use Test::More tests => 5;
+
+BEGIN {
+      use_ok ("Astro::NED::Query::NearName");
+}
 
 my ( $req, $res );
+my $object = 'Abell 2166';
 
 eval {
-      $req = Astro::NED::Query::NearName->new;
+      $req = Astro::NED::Query::NearName->new( ObjName => $object );
 };
 ok( ! $@, "new" );
 
-eval { 
-     $req->reset;
-};
-ok( ! $@, "reset" )
-    or diag $@;
-
-my $object = 'Abell 2166';
-$req->ObjName( $object );
 ok( $req->ObjName eq $object, "ObjName" );
 
 $req->Radius( 5 );
@@ -33,5 +27,5 @@ ok( !$@, "query" )
 #$_->dump foreach $res->objects;
 
 ok( $res->nobjects > 0 && ($res->objects)[0]->Name eq 'ABELL 2166',
-"   query result" );
+    "query result" );
 

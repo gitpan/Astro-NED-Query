@@ -27,43 +27,43 @@ use warnings;
 
 use base qw/ Astro::NED::Query::Objects Class::Accessor::Class /;
 
-our $VERSION = '0.01';
+our $VERSION = '0.20';
 
-__PACKAGE__->mk_class_accessors( qw( Field Option ) );
+__PACKAGE__->mk_class_accessors( qw( Field ) );
 
 __PACKAGE__->Field( { qw{
-			 ObjName	objname
-			 Radius		radius
-			 CoordSys	out_csys
-			 Equinox	out_equinox
-			 Sort		obj_sort
-			 Format		of
-			 ZVBreaker	zv_breaker
-			 ListLimit	list_limit
-			 ImageStamp	img_stamp
-			 ZConstraint	z_constraint
-			 ZValue1	z_value1
-			 ZValue2	z_value2
-			 ZUnit		z_unit
-			 ObjTypeInclude ot_include
-			 NamePrefixOp   nmp_op
-		     } } );
-
-__PACKAGE__->Option( { } );
+                         ObjName        objname
+                         Radius         radius
+                         CoordSys       out_csys
+                         Equinox        out_equinox
+                         Sort           obj_sort
+                         Format         of
+                         ZVBreaker      zv_breaker
+                         ListLimit      list_limit
+                         ImageStamp     img_stamp
+                         ZConstraint    z_constraint
+                         ZValue1        z_value1
+                         ZValue2        z_value2
+                         ZUnit          z_unit
+                         ObjTypeInclude ot_include
+                         NamePrefixOp   nmp_op
+                     } } );
 
 __PACKAGE__->mk_accessors( keys %{__PACKAGE__->Field},
-			   keys %{__PACKAGE__->Option},
-			   keys %{Astro::NED::Query->Option},
-			 );
+                         );
 
 __PACKAGE__->_mkMultipleAccessor ( qw/ IncObjType ExcObjType NamePrefix / );
 
 sub _init
 {
-  $_[0]->{_ua}->follow_link( text_regex => qr/near name/i );
-  $_[0]->_setupMultiple( 'option', IncObjType => qr/^in_objtypes\d+$/ );
-  $_[0]->_setupMultiple( 'option', ExcObjType => qr/^ex_objtypes\d+$/ );
-  $_[0]->_setupMultiple( 'option', NamePrefix => qr/^name_prefix\d+$/ );
+    my ( $self ) = @_;
+
+    $self->{_ua}->follow_link( text_regex => qr/near name/i );
+    $self->_setupMultiple( 'option', IncObjType => qr/^in_objtypes\d+$/ );
+    $self->_setupMultiple( 'option', ExcObjType => qr/^ex_objtypes\d+$/ );
+    $self->_setupMultiple( 'option', NamePrefix => qr/^name_prefix\d+$/ );
+
+    return;
 }
 
 
@@ -105,13 +105,12 @@ documented here) and how to set or get the search parameters.
 =item new
 
   $req = Astro::NED::Query::NearName->new( keyword1 => $value1,
-				   keyword2 => $value2, ... );
+                                   keyword2 => $value2, ... );
 
 
 Queries are constructed using the B<new> method, which is passed a
 list of keyword and value pairs.  The keywords may be the names of
-single valued query parameters, or may be class options.  There are no
-options I<specific> to B<Astro::NED::Query::NearName>.
+single valued query parameters.
 
 Fields which may have mutiple concurrent values (such as
 B<IncObjType>) cannot be specified in the call to B<new>; use the

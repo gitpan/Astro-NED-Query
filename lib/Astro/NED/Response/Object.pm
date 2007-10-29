@@ -25,49 +25,52 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.20';
 
 use base qw/ Class::Accessor::Fast /;
 
-use Astro::NED::Response::Objects;
+use Astro::NED::Response::Fields;
 
 # Preloaded methods go here.
 
-# using %Astro::NED::Response::Fields directly is gross,
-# but it makes sure we don't duplicate information
-
-__PACKAGE__->mk_ro_accessors( 'InfoLink', 
-			      map { $_->[0] } @Astro::NED::Response::Objects::Fields );
-
+__PACKAGE__->mk_ro_accessors( 'InfoLink',
+			      Astro::NED::Response::Fields::names() );
 sub dump
 {
   my ( $self, $fh )  = @_;
 
   $fh = \*STDOUT unless defined $fh;
 
-  print $fh "$_: ", defined $self->get($_) ? $self->get($_) : 'undef', "\n"
-    foreach map { $_->[0] } @Astro::NED::Response::Objects::Fields;
+  print {$fh} "$_: ", defined $self->get($_) ? $self->get($_) : 'undef', "\n"
+    foreach Astro::NED::Response::Fields::names();
+
+  return;
 }
 
 sub fields
 {
-  # object method
-  if ( ref $_[0] )
-  {
-    return grep { defined $_[0]->get($_) } 
-           map { $_->[0] } @Astro::NED::Response::Objects::Fields
-  }
+    my ( $self ) = @_;
 
-  # class method
-  else
-  {
-    return map { $_->[0] } @Astro::NED::Response::Objects::Fields;
-  }
+    # object method
+    if ( ref $self )
+    {
+        return grep { defined $self->get($_) }
+          Astro::NED::Response::Fields::names();
+    }
+
+    # class method
+    else
+    {
+        return Astro::NED::Response::Fields::names();
+    }
 }
 
 sub data
 {
-  %{$_[0]};
+    my ( $self ) = @_;
+
+    return %{$self};
+
 }
 
 
