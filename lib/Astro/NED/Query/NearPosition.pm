@@ -25,7 +25,7 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '0.20';
+our $VERSION = '0.30';
 
 use base qw/ Astro::NED::Query::Objects Class::Accessor::Class /;
 

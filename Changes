@@ -1,3 +1,15 @@
+0.30  Tue Oct 30 16:46:07 EDT 2007
+
+	* NED output has added "Spectra" column which caused "RA" column to be
+	  mismatched.
+
+	* improved internal checks on column matching and added data
+	  validity checks to (hopefully) prevent future silent errors
+	  if NED output format changes.
+
+	* new Response::Object::dumpstr method; dump method has added
+	  parameter.
+
 0.20  Mon Oct 29 18:54:53 EDT 2007
 
 	* Astro::Ned::Query::reset and set_default methods are now

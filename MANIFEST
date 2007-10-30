@@ -1,5 +1,7 @@
 ChangeLog
 Changes
+data/bad_ra.html
+data/ned1.html
 inc/Module/AutoInstall.pm
 inc/Module/Install.pm
 inc/Module/Install/AutoInstall.pm
@@ -33,6 +35,7 @@ t/byname.t
 t/coordextinct.t
 t/nearname.t
 t/nearposn.t
+t/parse_object.t
 t/perlcritic.t
 t/pod-coverage.t
 t/pod.t

@@ -27,7 +27,7 @@ use warnings;
 
 use base qw/ Astro::NED::Query::Objects Class::Accessor::Class /;
 
-our $VERSION = '0.20';
+our $VERSION = '0.30';
 
 __PACKAGE__->mk_class_accessors( qw( Field ) );
 

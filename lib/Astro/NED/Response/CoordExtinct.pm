@@ -27,7 +27,7 @@ use warnings;
 
 use Regexp::Common;
 
-our $VERSION = '0.20';
+our $VERSION = '0.30';
 
 use base qw/ Class::Accessor /;
 

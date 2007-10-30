@@ -25,7 +25,7 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '0.20';
+our $VERSION = '0.30';
 
 use base qw/ Class::Accessor::Fast /;
 
@@ -35,14 +35,24 @@ use Astro::NED::Response::Fields;
 
 __PACKAGE__->mk_ro_accessors( 'InfoLink',
 			      Astro::NED::Response::Fields::names() );
+sub dumpstr
+{
+  my ( $self, $pfx )  = @_;
+
+  return $pfx . join( "\n$pfx",
+               map { "$_: " . ( defined $self->get($_) ? $self->get($_) : 'undef' ) }
+               Astro::NED::Response::Fields::names()
+             )
+    . "\n";
+}
+
 sub dump
 {
-  my ( $self, $fh )  = @_;
+  my ( $self, $fh, $pfx )  = @_;
 
   $fh = \*STDOUT unless defined $fh;
 
-  print {$fh} "$_: ", defined $self->get($_) ? $self->get($_) : 'undef', "\n"
-    foreach Astro::NED::Response::Fields::names();
+  print {$fh} $self->dumpstr( $pfx );
 
   return;
 }
@@ -119,12 +129,24 @@ which to initialize the object.  See L<Fields> for more information.
 
 =over
 
+=item dumpstr
+
+  $string = $obj->dumpstr();
+  $string = $obj->dumpstr( $pfx );
+
+Return a string representation of the object. If C<$pfx> is specified,
+each output line will begin with it. The returned string is useful for
+printing only.
+
 =item dump
 
+  $obj->dump();
   $obj->dump( $fh );
+  $obj->dump( $fh, $pfx );
 
-Print a representation of the object the passed filehandle.  If no
+Print a representation of the object to the passed filehandle.  If no
 filehandle is specified, it is printed to the standard output stream.
+Each output line will begin with C<$pfx> if specified.
 
 =item fields
 

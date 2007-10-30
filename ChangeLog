@@ -1,8 +1,66 @@
-2007-10-29  Diab Jerius  <djerius@cfa.harvard.edu>
+2007-10-30  Diab Jerius  <djerius@cfa.harvard.edu>
 
-	Tag: 0.20
+	Tag: 0.30
 
-2007-10-29 19:17 -0400  djerius  <djerius@cfa.harvard.edu>  (5cf868e8406a [tip])
+2007-10-30 16:44 -0400  djerius  <djerius@cfa.harvard.edu>  (1c1bed90eade [tip])
+
+	* data/bad_ra.html, data/ned1.html, t/parse_object.t:
+	new tests to check data/column validity
+
+2007-10-30 16:44 -0400  djerius  <djerius@cfa.harvard.edu>  (8221a6252d25)
+
+	* lib/Astro/NED/Response/Objects.pm:
+	better field matching & validity checks. work with HTML::Parser
+	exception handling
+
+	Improve column matching checks to ensure that bad matches are much
+	less likely to silently happen.
+
+	Added data validity checks.
+
+	Turns out that HTML::Parser writes out exceptions thrown in
+	handlers. Now cache the error message and abort parsing instead of
+	throwing an exception.
+
+2007-10-30 16:39 -0400  djerius  <djerius@cfa.harvard.edu>  (f80e2d9cdc15)
+
+	* lib/Astro/NED/Response/Fields.pm:
+	updated field matching, added content validity checks
+
+	RA matching was broken, as a Spectra column was added and the RA
+	match grabbed that instead. Moved field matching here from
+	Response::Objects, moved case insensitivity into the actual regexps.
+
+	new function "check" which performs data validity checks on the
+	incoming data.
+
+2007-10-30 16:32 -0400  djerius  <djerius@cfa.harvard.edu>  (a223e824b88c)
+
+	* lib/Astro/NED/Response/Object.pm:
+	added dumpstr method; dump output may have a prefix
+
+2007-10-30 16:25 -0400  djerius  <djerius@cfa.harvard.edu>  (9ff9656feb8b)
+
+	* lib/Astro/NED/Query.pm:
+	fixed bad documentation
+
+2007-10-29 19:23 -0400  djerius  <djerius@cfa.harvard.edu>  (5c22adc7f13d)
+
+	* .hgtags:
+	Added tag 0.20 for changeset af167a884739
+
+2007-10-29 19:19 -0400  djerius  <djerius@cfa.harvard.edu>  (af167a884739 [0.20])
+
+	* ChangeLog, Changes, lib/Astro/NED/Query.pm,
+	lib/Astro/NED/Query/ByName.pm, lib/Astro/NED/Query/CoordExtinct.pm,
+	lib/Astro/NED/Query/NearName.pm,
+	lib/Astro/NED/Query/NearPosition.pm, lib/Astro/NED/Query/Objects.pm,
+	lib/Astro/NED/Response/CoordExtinct.pm,
+	lib/Astro/NED/Response/Fields.pm, lib/Astro/NED/Response/Object.pm,
+	lib/Astro/NED/Response/Objects.pm:
+	update for release
+
+2007-10-29 19:17 -0400  djerius  <djerius@cfa.harvard.edu>  (5cf868e8406a)
 
 	* lib/Astro/NED/Query.pm, t/backwards.t:
 	backwards compatibility with reset & set_default

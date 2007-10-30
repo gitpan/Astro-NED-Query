@@ -24,8 +24,9 @@ package Astro::NED::Response::Objects;
 use 5.006;
 use strict;
 use warnings;
+use Carp;
 
-our $VERSION = '0.20';
+our $VERSION = '0.30';
 
 use Astro::NED::Response::Fields;
 use Astro::NED::Response::Object;
@@ -97,6 +98,13 @@ sub parseHTML
   ## use critic
 
   my @cols;
+  my @colnames;
+
+  # HTML::Parser does its own funky handling of exceptions, which causes
+  # exceptions in handlers to be printed and then rethrown. work around
+  # that by keeping track of our exceptions excplicily and by using
+  # $p->eof;
+  my $error;
 
   $p = HTML::TableParser->new(
      [{
@@ -105,39 +113,86 @@ sub parseHTML
 
        hdr => sub {
 
+         my %used;
 	 for my $colname ( @{$_[2]} )
 	 {
-	   $colname = lc $colname;
-
 	   ## no critic (AccessOfPrivateData)
 	   # @Fields is a list of arrayrefs, not objects.
-	   my @matches = grep { $colname =~ $_->[1] }
-	                      Astro::NED::Response::Fields::fields();
+	   my @matches = Astro::NED::Response::Fields::match( $colname );
 	   ## use critic
 
-	   if ( 1 != @matches )
+           # A table column can't match more than one field, unless it's the Row No. column, which is
+           # in there twice.
+	   if ( 1 == @matches )
 	   {
-	     require Carp;
-	     Carp::croak( __PACKAGE__,
-			  "::internal error; multiple or zero column name matches for $colname\n ");
+               my $match = $matches[0];
+               ## no critic (AccessOfPrivateData)
+               my $name = $match->{name};
+               ## use critic
+
+               if ( exists $used{$name} && $name ne 'No' )
+               {
+                   $error =  "internal error; matched $match->{name} to more than one column in NED table: " .
+                     "$used{$name}, $colname \n";
+                   $p->eof;
+               }
+
+               $used{$name} = $colname;
+               push @colnames, $name;
+           }
+           else
+           {
+               if ( 0 == @matches )
+               {
+                   $error = "internal error: could not recognize column '$colname' in NED table\n";
+                   $p->eof;
+               }
+               else
+               {
+                   ## no critic (AccessOfPrivateData)
+                   $error = "internal error: multiple matches for column '$colname' in NED table: " . 
+                                join (", ", map { $_->{name} } @matches ) . "\n";
+                   $p->eof;
+                   ## use critic
+               }
+
 	   }
-	   push @cols, $matches[0][0];
+
 	 }
        },
 
        row => sub {
 	 my %data;
-	 @data{@cols} = map { $_ eq '' || $_ eq '...' ? undef : $_ } @{$_[2]};
+	 @data{@colnames} = map { $_ eq '' || $_ eq '...' ? undef : $_ } @{$_[2]};
 	 $data{InfoLink} = shift @links;
 	 $data{Name} =~ s/^[*]//;
-	 push @{$self->{objects}}, Astro::NED::Response::Object->new( \%data );
+
+         my $object = Astro::NED::Response::Object->new( \%data );
+
+         eval {
+             Astro::NED::Response::Fields::check( \%data );
+         };
+
+         if ( $@ )
+         {
+             $error = "error parsing NED output: $@" . "for object:\n" . $object->dumpstr("\t");
+             $@ = '';
+             $p->eof;
+         }
+
+	 push @{$self->{objects}}, $object;
        },
 
        Trim => 1,
       }]
   );
 
-  $p->parse( $_[0] );
+  eval { $p->parse( $_[0] ) };
+  if ( $@ || $error )
+  {
+      $error .= $@;
+      Carp::croak( __PACKAGE__, ': ', $error );
+  }
 
   return;
 }

@@ -25,7 +25,7 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '0.20';
+our $VERSION = '0.30';
 
 use autouse Carp => qw/ croak carp confess /;
 
@@ -459,7 +459,7 @@ the parameter values and reissue the B<query> method.
   $req = Astro::NED::Query::ByName->new( ObjName => 'Abell 2166',
                                          Extend => 1 );
   $res = $req->query;
-  print $_->Name, "\n" foreach @{$res->objects};
+  print $_->Name, "\n" foreach $res->objects;
 
 =item Querying near name for Galaxies with X-ray emission
 
@@ -468,7 +468,7 @@ the parameter values and reissue the B<query> method.
   $req->IncObjType( Xray => 1 );
   $req->ObjTypeInclude( 'ALL' );
   $res = $req->query;
-  print $_->Name, "\n" foreach @{$res->objects};
+  print $_->Name, "\n" foreach $res->objects;
 
 =back
 
