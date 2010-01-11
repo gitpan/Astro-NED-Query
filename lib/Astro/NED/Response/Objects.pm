@@ -121,8 +121,8 @@ sub parseHTML
 	   my @matches = Astro::NED::Response::Fields::match( $colname );
 	   ## use critic
 
-           # A table column can't match more than one field, unless it's the Row No. column, which is
-           # in there twice.
+           # A table column can't match more than one field, unless
+           # it's the Row No. column, which is in there twice.
 	   if ( 1 == @matches )
 	   {
                my $match = $matches[0];

@@ -82,6 +82,11 @@ my @Fields =
    chk => undef,
  },
 
+ { name => 'mag',
+   re => qr/Filter$/,
+   chk => undef
+ },
+
  { name => 'Distance',
    re  => qr/distance/i,
    chk => RE_num_real(),
@@ -131,6 +136,8 @@ my @Fields =
    re  => qr/spectra/i,
    chk => undef,
  },
+
+
 
   );
 

@@ -1,3 +1,7 @@
+0.31  Mon Jan 11 12:04:41 EST 2010
+
+        * Handle new NED output column, "Mag./Filter".
+
 0.30  Tue Oct 30 16:46:07 EDT 2007
 
 	* NED output has added "Spectra" column which caused "RA" column to be

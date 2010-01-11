@@ -1,9 +1,32 @@
-2007-10-30  Diab Jerius  <djerius@cfa.harvard.edu>
+2010-01-11 12:06 -0500  djerius  <djerius@cfa.harvard.edu>  (a4da77fd456a [tip])
 
-	Tag: 0.30
+	* lib/Astro/NED/Response/Objects.pm:
+	reformat source
 
-2007-10-30 16:44 -0400  djerius  <djerius@cfa.harvard.edu>  (1c1bed90eade [tip])
+2010-01-11 12:06 -0500  djerius  <djerius@cfa.harvard.edu>  (9f694e1f91e3)
 
+	* lib/Astro/NED/Response/Fields.pm:
+	add support for new NED column Mag./Filter
+
+2007-10-30 16:50 -0400  djerius  <djerius@cfa.harvard.edu>  (bade19c70b6e)
+
+	* .hgtags:
+	Added tag 0.30 for changeset aa4b5300a220
+
+2007-10-30 16:50 -0400  djerius  <djerius@cfa.harvard.edu>  (aa4b5300a220 [0.30])
+
+	* ChangeLog, Changes, lib/Astro/NED/Query.pm,
+	lib/Astro/NED/Query/ByName.pm, lib/Astro/NED/Query/CoordExtinct.pm,
+	lib/Astro/NED/Query/NearName.pm,
+	lib/Astro/NED/Query/NearPosition.pm, lib/Astro/NED/Query/Objects.pm,
+	lib/Astro/NED/Response/CoordExtinct.pm,
+	lib/Astro/NED/Response/Fields.pm, lib/Astro/NED/Response/Object.pm,
+	lib/Astro/NED/Response/Objects.pm:
+	updated for release
+
+2007-10-30 16:44 -0400  djerius  <djerius@cfa.harvard.edu>  (1c1bed90eade)
+
+	* data/bad_ra.html, data/ned1.html, t/parse_object.t: new file.
 	* data/bad_ra.html, data/ned1.html, t/parse_object.t:
 	new tests to check data/column validity
 
@@ -62,6 +85,7 @@
 
 2007-10-29 19:17 -0400  djerius  <djerius@cfa.harvard.edu>  (5cf868e8406a)
 
+	* t/backwards.t: new file.
 	* lib/Astro/NED/Query.pm, t/backwards.t:
 	backwards compatibility with reset & set_default
 
@@ -116,6 +140,7 @@
 
 2007-10-29 15:39 -0400  djerius  <djerius@cfa.harvard.edu>  (47c03c348278)
 
+	* lib/Astro/NED/Response/Fields.pm: new file.
 	* lib/Astro/NED/Response/Fields.pm, lib/Astro/NED/Response/Object.pm,
 	lib/Astro/NED/Response/Objects.pm:
 	abstract access to response object fields avoid mutual inclusion;
@@ -157,6 +182,7 @@
 
 2007-09-20 20:04 -0400  djerius  <djerius@cfa.harvard.edu>  (4d99d1863a37)
 
+	* MANIFEST: deleted file.
 	* MANIFEST:
 	should not be controlled
 
@@ -183,6 +209,7 @@
 
 2007-09-20 19:53 -0400  djerius  <djerius@cfa.harvard.edu>  (4178155bddf7)
 
+	* t/00-load.t, t/perlcritic.t, t/pod-coverage.t, t/pod.t: new file.
 	* t/00-load.t, t/perlcritic.t, t/pod-coverage.t, t/pod.t:
 	add standard pod and perlcritic tests
 
@@ -201,6 +228,7 @@
 
 2007-05-02 20:53 +0000  dj  <dj>  (ad250feaae88)
 
+	* ChangeLog: new file.
 	* ChangeLog:
 	added ChangeLog
 
@@ -221,6 +249,7 @@
 
 2004-12-21 04:13 +0000  dj  <dj>  (49136510f6b7)
 
+	* Changes: new file.
 	* Changes, MANIFEST:
 	Empty changelog
 
@@ -242,11 +271,14 @@
 2004-12-21 03:57 +0000  dj  <dj>  (8be53ebdb4ea)
 
 	* lib/Astro/NED/Query/CoordExtinct.pm,
+	lib/Astro/NED/Response/CoordExtinct.pm, t/coordextinct.t: new file.
+	* lib/Astro/NED/Query/CoordExtinct.pm,
 	lib/Astro/NED/Response/CoordExtinct.pm, t/coordextinct.t:
 	new interface to coordinate transforms and galactic extinction
 
 2007-05-02 16:57 -0400  djerius  <djerius@cfa.harvard.edu>  (1d8378b42c81)
 
+	* .hgtags: new file.
 	* .hgtags:
 	Added tag initial for changeset 958abad5e702
 
@@ -257,11 +289,18 @@
 	lib/Astro/NED/Query/NearName.pm,
 	lib/Astro/NED/Query/NearPosition.pm, lib/Astro/NED/Query/Objects.pm,
 	lib/Astro/NED/Response/Object.pm, lib/Astro/NED/Response/Objects.pm,
+	t/byname.t, t/nearname.t, t/nearposn.t: new file.
+	* LICENSE, MANIFEST, MANIFEST.SKIP, Makefile.PL, README,
+	lib/Astro/NED/Query.pm, lib/Astro/NED/Query/ByName.pm,
+	lib/Astro/NED/Query/NearName.pm,
+	lib/Astro/NED/Query/NearPosition.pm, lib/Astro/NED/Query/Objects.pm,
+	lib/Astro/NED/Response/Object.pm, lib/Astro/NED/Response/Objects.pm,
 	t/byname.t, t/nearname.t, t/nearposn.t:
 	Initial revision
 
 2007-05-02 16:57 -0400  djerius  <djerius@cfa.harvard.edu>  (dd602e425f8b)
 
+	* .hgignore: new file.
 	* .hgignore:
 	Tailor preparing to convert repo by adding .hgignore
 
