@@ -114,7 +114,7 @@ results of the query.
 Objects are read-only.
 
 For complete information on the available fields, see
-L<http://nedwww.ipac.caltech.edu/help/objresult_help.html>.
+L<http://ned.ipac.caltech.edu/classic/help/objresult_help.html>.
 
 Currently, the detailed object information is *not* available (just
 the summary information) although the B<InfoLink> method will return

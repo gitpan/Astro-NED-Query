@@ -242,7 +242,7 @@ available.
 This specifies how to handle objects with name prefixes specified with
 the B<NamePrefix> field.  This is so complicated there's an extra
 documentation link on the NED site, so I suggest you look there:
-L<http://nedwww.ipac.caltech.edu/help/object_help.html#exclcat>.
+L<http://ned.ipac.caltech.edu/classic/help/object_help.html#exclcat>.
 
 Use the B<possible_values> method to determine which object types are
 available.
