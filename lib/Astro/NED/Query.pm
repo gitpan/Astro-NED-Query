@@ -31,7 +31,7 @@ use autouse Carp => qw/ croak carp confess /;
 
 use WWW::Mechanize;
 
-use constant NED_URL => 'http://nedwww.ipac.caltech.edu/index.html';
+use constant NED_URL => 'https://ned.ipac.caltech.edu/classic/';
 
 #---------------------------------------------------------------------------
 
